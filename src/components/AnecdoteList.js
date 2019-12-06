@@ -1,10 +1,12 @@
 import React from 'react'
 
 import { voteAnecdote } from '../reducers/anecdoteReducer'
+import { createVoteNotification, hideNotification } from '../reducers/notificationReducer'
 
 const AnecdoteList = ({ store }) => {
-    const anecdotes = store.getState()
- 
+    const anecdotes = store.getState().anecdotes
+    
+    
     return ( 
         
         <div>
@@ -19,7 +21,13 @@ const AnecdoteList = ({ store }) => {
                     </div>
                     <div>
                         has {anecdote.votes}
-                        <button onClick={() => store.dispatch(voteAnecdote(anecdote.id))}>vote</button>
+                        <button onClick={() => {
+                            store.dispatch(voteAnecdote(anecdote.id)); 
+                            store.dispatch(createVoteNotification(anecdote.content));
+                            setTimeout(() => {
+                                store.dispatch(hideNotification())
+                              }, 5000)
+                            }} >vote</button>
                     </div>
                 </div>
             )}
