@@ -3,6 +3,7 @@ import React from 'react'
 import { createAnecdote } from '../reducers/anecdoteReducer'
 import { createNotification, hideNotification } from '../reducers/notificationReducer'
 
+
 const AnecdoteForm = (props) => {
   const addAnecdote = (event) => {
     event.preventDefault()
@@ -12,6 +13,7 @@ const AnecdoteForm = (props) => {
     props.store.dispatch(
       createAnecdote(content) 
     )
+    
     props.store.dispatch(
       createNotification(content)  
     )
