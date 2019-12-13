@@ -1,20 +1,20 @@
 import React from 'react'
-
+import { connect } from 'react-redux'
 import { voteAnecdote } from '../reducers/anecdoteReducer'
 import { createVoteNotification, hideNotification } from '../reducers/notificationReducer'
 import  { filterAnecdotes } from '../reducers/filterReducer'
 
 
-const AnecdoteList = ({ store }) => {
-    const anecdotes = store.getState().anecdotes
+const AnecdoteList = (props) => {
+    //const anecdotes = store.getState().anecdotes
     
-    const filter = store.getState().filter
+    //const filter = store.getState().filter
    
     if(filterAnecdotes){
         return ( 
         
             <div>
-                {filter
+                {props.filter
                 .sort((a, b)=> {
                     return b.votes - a.votes
                 })
@@ -25,13 +25,16 @@ const AnecdoteList = ({ store }) => {
                         </div>
                         <div>
                             has {anecdote.votes}
+                            
                             <button onClick={() => {
-                                store.dispatch(voteAnecdote(anecdote.id)); 
-                                store.dispatch(createVoteNotification(anecdote.content));
+                                console.log(anecdote.id)
+                                props.voteAnecdote(anecdote.id); 
+                                props.createVoteNotification(anecdote.content);
                                 setTimeout(() => {
-                                    store.dispatch(hideNotification())
+                                    props.hideNotification()
                                   }, 5000)
                                 }} >vote</button>
+                                
                         </div>
                     </div>
                 )}
@@ -41,10 +44,12 @@ const AnecdoteList = ({ store }) => {
     return ( 
         
         <div>
-            {anecdotes
+            {props.anecdotes
+             
             .sort((a, b)=> {
                 return b.votes - a.votes
             })
+            
             .map(anecdote =>
                 <div key={anecdote.id}>
                     <div>
@@ -52,13 +57,15 @@ const AnecdoteList = ({ store }) => {
                     </div>
                     <div>
                         has {anecdote.votes}
+                        
                         <button onClick={() => {
-                            store.dispatch(voteAnecdote(anecdote.id)); 
-                            store.dispatch(createVoteNotification(anecdote.content));
+                            props.voteAnecdote(anecdote.id); 
+                            props.createVoteNotification(anecdote.content);
                             setTimeout(() => {
-                                store.dispatch(hideNotification())
+                                props.hideNotification()
                               }, 5000)
                             }} >vote</button>
+                            
                     </div>
                 </div>
             )}
@@ -66,4 +73,32 @@ const AnecdoteList = ({ store }) => {
     )
 }
 
-export default AnecdoteList
+const mapStateToProps = (state) => {
+    // joskus on hyödyllistä tulostaa mapStateToProps:ista...
+    console.log(state)
+    return {
+      anecdotes: state.anecdotes,
+      filter: state.filter,
+      message: state.message
+    }
+  }
+  
+  const mapDispatchToProps = dispatch => {
+    return {
+        voteAnecdote: value => {
+        dispatch(voteAnecdote(value))
+      },
+      createVoteNotification: value => {
+        dispatch(createVoteNotification(value))
+      },
+      hideNotification: value => {
+        dispatch(hideNotification(value))
+      },
+    }
+  }
+  /*
+  const mapDispatchToProps = {
+    voteAnecdote, createVoteNotification, hideNotification
+  }
+*/
+export default connect(mapStateToProps, mapDispatchToProps)(AnecdoteList)
